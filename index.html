@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrology Chart Text Generator</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --container-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #334155;
+            --success: #10b981;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        label.main-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9em;
+        }
+
+        textarea {
+            width: 100%;
+            background-color: #0b1120;
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Consolas', 'Courier New', monospace;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Toggle Switch Styles */
+        .toggles-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        /* Ascendant Dropdown Styling */
+        select.ascendant-select {
+            background-color: #0b1120;
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select.ascendant-select:focus {
+            border-color: var(--accent);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin: 10px 0 25px 0;
+        }
+
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.success {
+            background-color: var(--success);
+        }
+
+        button.success:hover {
+            background-color: #059669;
+        }
+
+        button.danger {
+            background-color: var(--danger);
+        }
+
+        button.danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--container-bg);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        
+        .modal-content h3 {
+            margin-top: 0;
+        }
+
+        /* Bhava Chalit Grid */
+        .bhava-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .bhava-item label {
+            display: block;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            text-transform: capitalize;
+        }
+
+        .bhava-item input {
+            width: 100%;
+            background-color: #0b1120;
+            color: #e2e8f0;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .bhava-item input:focus {
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Astrological Data Converter</h2>
+        <p class="subtitle">Paste your tabular planetary data to generate standardized plain text.</p>
+
+        <label class="main-label" for="inputData">Input Data (Paste Table Here)</label>
+        <textarea id="inputData" rows="10" placeholder="Body  Longitude (in D-1 (Trd)) Nakshatra Pada Rasi Navamsa..."></textarea>
+        
+        <div class="toggles-wrapper">
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="aspectToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label" onclick="document.getElementById('aspectToggle').click()">Aspects</span>
+            </div>
+
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="combustToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label" onclick="document.getElementById('combustToggle').click()">Combustion</span>
+            </div>
+
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="charaToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label" onclick="document.getElementById('charaToggle').click()">Chara Karaka</span>
+            </div>
+
+            <div class="toggle-container">
+                <label class="switch">
+                    <input type="checkbox" id="bhavaToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label" onclick="document.getElementById('bhavaToggle').click()">Bhava Chalit</span>
+            </div>
+
+            <div class="toggle-container">
+                <label class="toggle-label" for="ascendantSelect">Ascendant:</label>
+                <select id="ascendantSelect" class="ascendant-select">
+                    <option value="default">Default (From Data)</option>
+                    <option value="1">Aries</option>
+                    <option value="2">Taurus</option>
+                    <option value="3">Gemini</option>
+                    <option value="4">Cancer</option>
+                    <option value="5">Leo</option>
+                    <option value="6">Virgo</option>
+                    <option value="7">Libra</option>
+                    <option value="8">Scorpio</option>
+                    <option value="9">Sagittarius</option>
+                    <option value="10">Capricorn</option>
+                    <option value="11">Aquarius</option>
+                    <option value="12">Pisces</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="processChart()">Generate Text</button>
+            <button onclick="clearInput()" style="background-color: #475569;">Clear</button>
+        </div>
+
+        <label class="main-label" for="outputData">Generated Output</label>
+        <textarea id="outputData" rows="14" readonly placeholder="Output will appear here..."></textarea>
+        
+        <div class="button-group">
+            <button id="copyBtn" onclick="copyToClipboard()" class="success">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <!-- Combustion Modal -->
+    <div class="modal-overlay" id="combustModal">
+        <div class="modal-content">
+            <h3>Combustion Data</h3>
+            <p class="subtitle" style="margin-bottom: 10px;">Paste the Planet Combustion table here.</p>
+            <textarea id="combustInput" rows="8" placeholder="Planet   Combust?&#10;Mars     -&#10;Saturn   Yes"></textarea>
+            <div class="button-group" style="margin-bottom: 0; margin-top: 15px; justify-content: flex-end;">
+                <button class="danger" onclick="cancelCombustion()">Cancel</button>
+                <button class="success" onclick="saveCombustion()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chara Karaka Modal -->
+    <div class="modal-overlay" id="charaModal">
+        <div class="modal-content">
+            <h3>Chara Karaka Data</h3>
+            <p class="subtitle" style="margin-bottom: 10px;">Paste the Chara Karaka table here.</p>
+            <textarea id="charaInput" rows="8" placeholder="Chara karaka Planet Meaning&#10;AK           Jupiter Self&#10;AmK          Moon    Minister"></textarea>
+            <div class="button-group" style="margin-bottom: 0; margin-top: 15px; justify-content: flex-end;">
+                <button class="danger" onclick="cancelChara()">Cancel</button>
+                <button class="success" onclick="saveChara()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bhava Chalit Modal -->
+    <div class="modal-overlay" id="bhavaModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3>Bhava Chalit Placements</h3>
+            <p class="subtitle" style="margin-bottom: 5px;">Enter shifted house numbers (1-12) for the respective planets. Leave blank if unchanged.</p>
+            
+            <div class="bhava-grid" id="bhavaGridInputs">
+                <!-- Dynamically populated by JS -->
+            </div>
+
+            <div class="button-group" style="margin-bottom: 0; margin-top: 20px; justify-content: flex-end;">
+                <button class="danger" onclick="cancelBhava()">Cancel</button>
+                <button class="success" onclick="saveBhava()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Core Astronomical Mappings
+        const signs = ["Ar", "Ta", "Ge", "Cn", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"];
+        const signNames = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+        const planetList = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn", "rahu", "ketu"];
+        
+        // Lordships (Indexes 1-12)
+        const lords = {
+            "sun": [5],
+            "moon": [4],
+            "mars": [1, 8],
+            "mercury": [3, 6],
+            "jupiter": [9, 12],
+            "venus": [2, 7],
+            "saturn": [10, 11]
+        };
+
+        // Aspect Rules
+        const aspectRules = {
+            "sun": [7],
+            "moon": [7],
+            "mars": [4, 7, 8],
+            "mercury": [7],
+            "jupiter": [5, 7, 9],
+            "venus": [7],
+            "saturn": [3, 7, 10],
+            "rahu": [5, 7, 9],
+            "ketu": [5, 7, 9]
+        };
+
+        const charaMap = {
+            "ak": "Atmakaraka",
+            "amk": "Amatyakaraka",
+            "bk": "Bhratrikaraka",
+            "mk": "Matrukaraka",
+            "pik": "Pitrikaraka", // Added PiK
+            "pk": "Putrakaraka",
+            "gk": "Gnatikaraka",
+            "dk": "Darakaraka"
+        };
+
+        // State variables
+        let combustedPlanets = [];
+        let charaKarakas = {};
+        let bhavaChalitData = {};
+
+        // Generate Bhava Inputs
+        const bhavaGrid = document.getElementById('bhavaGridInputs');
+        planetList.forEach(planet => {
+            bhavaGrid.innerHTML += `
+                <div class="bhava-item">
+                    <label for="bhava-${planet}">${planet}</label>
+                    <input type="number" id="bhava-${planet}" min="1" max="12" placeholder="House #">
+                </div>
+            `;
+        });
+
+        // Combustion Modal Logic
+        const combustToggle = document.getElementById('combustToggle');
+        const combustModal = document.getElementById('combustModal');
+        const combustInput = document.getElementById('combustInput');
+
+        combustToggle.addEventListener('change', function() {
+            if (this.checked) {
+                combustModal.style.display = 'flex';
+                combustInput.value = '';
+                combustInput.focus();
+            } else {
+                combustedPlanets = []; 
+            }
+        });
+
+        function saveCombustion() {
+            const lines = combustInput.value.split('\n');
+            combustedPlanets = []; 
+            
+            for (let line of lines) {
+                let lowerLine = line.trim().toLowerCase();
+                if (lowerLine === '') continue;
+                
+                for (let p of planetList) {
+                    if (lowerLine.startsWith(p) && lowerLine.includes('yes')) {
+                        if (!combustedPlanets.includes(p)) {
+                            combustedPlanets.push(p);
+                        }
+                    }
+                }
+            }
+            combustModal.style.display = 'none';
+        }
+
+        function cancelCombustion() {
+            combustModal.style.display = 'none';
+            if (combustedPlanets.length === 0) combustToggle.checked = false;
+        }
+
+        // Chara Karaka Modal Logic
+        const charaToggle = document.getElementById('charaToggle');
+        const charaModal = document.getElementById('charaModal');
+        const charaInput = document.getElementById('charaInput');
+
+        charaToggle.addEventListener('change', function() {
+            if (this.checked) {
+                charaModal.style.display = 'flex';
+                charaInput.value = '';
+                charaInput.focus();
+            } else {
+                charaKarakas = {}; 
+            }
+        });
+
+        function saveChara() {
+            const lines = charaInput.value.split('\n');
+            charaKarakas = {}; 
+            
+            for (let line of lines) {
+                let tokens = line.trim().split(/\s+/);
+                if (tokens.length >= 2) {
+                    let code = tokens[0].toLowerCase();
+                    if (charaMap[code]) {
+                        let matchedPlanet = planetList.find(p => line.toLowerCase().includes(p));
+                        // Allowed Rahu, excluded Ketu
+                        if (matchedPlanet && matchedPlanet !== "ketu") {
+                            charaKarakas[matchedPlanet] = charaMap[code];
+                        }
+                    }
+                }
+            }
+            charaModal.style.display = 'none';
+        }
+
+        function cancelChara() {
+            charaModal.style.display = 'none';
+            if (Object.keys(charaKarakas).length === 0) charaToggle.checked = false;
+        }
+
+        // Bhava Chalit Modal Logic
+        const bhavaToggle = document.getElementById('bhavaToggle');
+        const bhavaModal = document.getElementById('bhavaModal');
+
+        bhavaToggle.addEventListener('change', function() {
+            if (this.checked) {
+                bhavaModal.style.display = 'flex';
+            } else {
+                bhavaChalitData = {}; 
+                planetList.forEach(p => document.getElementById('bhava-' + p).value = '');
+            }
+        });
+
+        function saveBhava() {
+            bhavaChalitData = {};
+            planetList.forEach(p => {
+                let val = document.getElementById('bhava-' + p).value;
+                if (val && !isNaN(val) && val >= 1 && val <= 12) {
+                    bhavaChalitData[p] = parseInt(val, 10);
+                }
+            });
+            bhavaModal.style.display = 'none';
+        }
+
+        function cancelBhava() {
+            bhavaModal.style.display = 'none';
+            if (Object.keys(bhavaChalitData).length === 0) bhavaToggle.checked = false;
+        }
+
+        // Helper functions
+        function getHouseNumber(signIndex, lagnaIndex) {
+            return (signIndex - lagnaIndex + 12) % 12 + 1;
+        }
+
+        function getHouseOrdinal(num) {
+            if (num === 1) return "1st";
+            if (num === 2) return "2nd";
+            if (num === 3) return "3rd";
+            return num + "th";
+        }
+
+        function processChart() {
+            const text = document.getElementById('inputData').value;
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+            if (lines.length === 0) return;
+
+            let chartName = "d-1";
+            const chartMatch = text.match(/d-\d+/i);
+            if (chartMatch) chartName = chartMatch[0].toLowerCase();
+
+            let parsedLagnaIndex = -1;
+            let extractedPlanets = [];
+
+            // Phase 1: Parse Input Text
+            for (let line of lines) {
+                const tokens = line.trim().split(/\s+/);
+                if (tokens.length < 5) continue;
+
+                const rasiToken = tokens[tokens.length - 2];
+                const rasiIndex = signs.indexOf(rasiToken) + 1;
+
+                if (tokens[0].toLowerCase() === 'lagna') {
+                    parsedLagnaIndex = rasiIndex;
+                    continue;
+                }
+
+                let matchedPlanet = planetList.find(p => tokens[0].toLowerCase().includes(p));
+                if (matchedPlanet) {
+                    extractedPlanets.push({
+                        name: matchedPlanet,
+                        isRetrograde: line.includes('(R)'),
+                        rasiIndex: rasiIndex
+                    });
+                }
+            }
+
+            // Determine Lagna Index (Parsed vs Dropdown Override)
+            const ascendantSelect = document.getElementById('ascendantSelect');
+            let lagnaIndex = -1;
+
+            if (ascendantSelect && ascendantSelect.value !== 'default') {
+                lagnaIndex = parseInt(ascendantSelect.value, 10);
+            } else {
+                lagnaIndex = parsedLagnaIndex;
+            }
+
+            if (lagnaIndex === 0 || lagnaIndex === -1) {
+                document.getElementById('outputData').value = "Error: Could not identify Lagna (Ascendant). Please select an Ascendant sign from the dropdown or include Lagna in input data.";
+                return;
+            }
+
+            // Phase 2: Group Planets and Record Houses 
+            let signGroups = {};
+            let planetHouses = {};
+            for (let p of extractedPlanets) {
+                planetHouses[p.name] = getHouseNumber(p.rasiIndex, lagnaIndex);
+                if (!signGroups[p.rasiIndex]) signGroups[p.rasiIndex] = [];
+                signGroups[p.rasiIndex].push(p);
+            }
+
+            // Phase 3: Pre-Calculate Aspects (If Toggle is ON)
+            let shouldGenerateAspects = document.getElementById('aspectToggle').checked;
+            let aspectStrings = {};
+
+            if (shouldGenerateAspects) {
+                for (let pName of planetList) {
+                    if (!planetHouses[pName]) continue;
+
+                    let houseP = planetHouses[pName];
+                    let rules = aspectRules[pName];
+                    let aspectsHouses = [];
+
+                    for (let r of rules) {
+                        let targetHouse = (houseP + r - 1) % 12;
+                        if (targetHouse === 0) targetHouse = 12;
+                        aspectsHouses.push(targetHouse);
+                    }
+
+                    let aspectedBy = [];
+                    for (let otherP of planetList) {
+                        if (otherP === pName) continue;
+                        if (!planetHouses[otherP]) continue;
+
+                        let houseOther = planetHouses[otherP];
+                        let rulesOther = aspectRules[otherP];
+
+                        for (let r of rulesOther) {
+                            let targetHouse = (houseOther + r - 1) % 12;
+                            if (targetHouse === 0) targetHouse = 12;
+                            if (targetHouse === houseP) {
+                                aspectedBy.push(otherP);
+                                break;
+                            }
+                        }
+                    }
+
+                    let houseStrings = aspectsHouses.map(h => getHouseOrdinal(h) + " house");
+                    let aspectsStr = "";
+                    if (houseStrings.length === 1) aspectsStr = houseStrings[0];
+                    else if (houseStrings.length === 2) aspectsStr = houseStrings.join(" and ");
+                    else {
+                        let last = houseStrings.pop();
+                        aspectsStr = houseStrings.join(", ") + " and " + last;
+                    }
+
+                    let aspectedByStr = "";
+                    if (aspectedBy.length === 0) aspectedByStr = "no planet";
+                    else if (aspectedBy.length === 1) aspectedByStr = aspectedBy[0];
+                    else if (aspectedBy.length === 2) aspectedByStr = aspectedBy.join(" and ");
+                    else {
+                        let last = aspectedBy.pop();
+                        aspectedByStr = aspectedBy.join(", ") + " and " + last;
+                    }
+
+                    aspectStrings[pName] = `${pName} aspects the ${aspectsStr} and is aspected by ${aspectedByStr}.`;
+                }
+            }
+
+            // Phase 4: Construct Final Output Sentences
+            let outputLines = [];
+            outputLines.push(`${chartName} chart ascendant sign is ${signNames[lagnaIndex - 1]}.`);
+            let processedSigns = new Set();
+            let shouldGenerateBhava = document.getElementById('bhavaToggle').checked;
+
+            for (let pName of planetList) {
+                let currentPlanet = extractedPlanets.find(p => p.name === pName);
+                if (!currentPlanet) continue;
+                
+                if (processedSigns.has(currentPlanet.rasiIndex)) continue;
+
+                const rasiGroup = signGroups[currentPlanet.rasiIndex];
+                processedSigns.add(currentPlanet.rasiIndex);
+
+                const placementHouse = planetHouses[currentPlanet.name];
+                const placementSignName = signNames[currentPlanet.rasiIndex - 1];
+                let subjectPhrases = [];
+                let aspectSentencesForGroup = [];
+                let bhavaSentencesForGroup = [];
+
+                for (let member of rasiGroup) {
+                    
+                    // Modifiers Array for exact order: Retrograde -> Combust -> Chara Karaka
+                    let modifiers = [];
+                    if (member.isRetrograde) modifiers.push("retrograde");
+                    if (combustedPlanets.includes(member.name)) modifiers.push("combust");
+                    // Allowed Rahu, excluded Ketu
+                    if (charaKarakas[member.name] && member.name !== "ketu") {
+                        modifiers.push(charaKarakas[member.name]);
+                    }
+
+                    let formattedName = modifiers.length > 0 ? `${modifiers.join(" ")} ${member.name}` : member.name;
+
+                    if (member.name === "rahu" || member.name === "ketu") {
+                        subjectPhrases.push(formattedName);
+                    } else {
+                        let ownedSigns = lords[member.name];
+                        let ownedHouses = ownedSigns.map(s => getHouseNumber(s, lagnaIndex)).sort((a, b) => a - b);
+                        let houseStrings = ownedHouses.map(h => h === 1 ? "ascendant" : `${getHouseOrdinal(h)} house`);
+                        
+                        let lordshipText = houseStrings.length === 1 
+                            ? `lord of the ${houseStrings[0]}` 
+                            : `lord of the ${houseStrings[0]} and ${houseStrings[1]}`;
+                            
+                        subjectPhrases.push(`${lordshipText} ${formattedName}`);
+                    }
+
+                    // Pre-generate Aspects and Bhava sentences per planet
+                    if (shouldGenerateAspects && aspectStrings[member.name]) {
+                        aspectSentencesForGroup.push(aspectStrings[member.name]);
+                    }
+
+                    if (shouldGenerateBhava && bhavaChalitData[member.name] !== undefined) {
+                        let newHouse = bhavaChalitData[member.name];
+                        if (newHouse !== planetHouses[member.name]) {
+                            bhavaSentencesForGroup.push(`${member.name} shift to the ${getHouseOrdinal(newHouse)} house on the bhava chalit chart.`);
+                        }
+                    }
+                }
+
+                let finalSubjectStr = "";
+                let verbStr = "";
+
+                if (subjectPhrases.length === 1) {
+                    finalSubjectStr = subjectPhrases[0];
+                    verbStr = "is";
+                } else if (subjectPhrases.length === 2) {
+                    finalSubjectStr = subjectPhrases.join(" and ");
+                    verbStr = "conjunct and placed";
+                } else {
+                    let last = subjectPhrases.pop();
+                    finalSubjectStr = subjectPhrases.join(", ") + " and " + last;
+                    verbStr = "conjunct and placed";
+                }
+
+                let placementSentence = "";
+                if (subjectPhrases.length === 1 && (subjectPhrases[0].includes("rahu") || subjectPhrases[0].includes("ketu"))) {
+                    placementSentence = `${finalSubjectStr} is placed on the ${getHouseOrdinal(placementHouse)} house on the sign of ${placementSignName}.`;
+                } else {
+                    let verb = verbStr.includes("conjunct") ? "conjunct and placed" : "is placed";
+                    placementSentence = `${finalSubjectStr} ${verb} on the ${getHouseOrdinal(placementHouse)} house on the sign of ${placementSignName}.`;
+                }
+
+                let finalLine = placementSentence;
+                
+                if (shouldGenerateAspects && aspectSentencesForGroup.length > 0) {
+                    finalLine += " " + aspectSentencesForGroup.join(" ");
+                }
+                
+                if (shouldGenerateBhava && bhavaSentencesForGroup.length > 0) {
+                    finalLine += " " + bhavaSentencesForGroup.join(" ");
+                }
+
+                outputLines.push(finalLine);
+            }
+
+            document.getElementById('outputData').value = outputLines.join('\n');
+        }
+
+        function clearInput() {
+            document.getElementById('inputData').value = '';
+            document.getElementById('outputData').value = '';
+            
+            // Reset toggles and dropdown
+            document.getElementById('aspectToggle').checked = false;
+            document.getElementById('combustToggle').checked = false;
+            document.getElementById('charaToggle').checked = false;
+            document.getElementById('bhavaToggle').checked = false;
+            document.getElementById('ascendantSelect').value = 'default';
+            
+            // Clear memory & inputs
+            combustedPlanets = [];
+            charaKarakas = {};
+            bhavaChalitData = {};
+            planetList.forEach(p => document.getElementById('bhava-' + p).value = '');
+            
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = 'Copy to Clipboard';
+            btn.style.backgroundColor = 'var(--success)';
+        }
+
+        function copyToClipboard() {
+            const outputText = document.getElementById('outputData');
+            if (!outputText.value) return;
+            
+            outputText.select();
+            outputText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(outputText.value).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.innerText = 'Copied!';
+                btn.style.backgroundColor = '#059669';
+                
+                setTimeout(() => {
+                    btn.innerText = 'Copy to Clipboard';
+                    btn.style.backgroundColor = 'var(--success)';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
