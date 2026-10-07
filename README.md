@@ -1,24 +1,36 @@
 # JH Chart Text Generator
 
-**JH Chart Text Generator** is a lightweight, web-based tool designed to convert raw tabular data exported from **Jagannatha Hora** into standardized, human-readable plain text descriptions. 
+**JH Chart Text Generator** is a lightweight, web-based tool designed to convert raw tabular data exported from **Jagannatha Hora** into standardized, human-readable plain text descriptions.
+
+🌐 **Live Demo:** [https://sawithanage.github.io/jh-chart-text-generator/](https://sawithanage.github.io/jh-chart-text-generator/)
+
+---
 
 It streamlines Vedic astrology report creation and data preparation for analysis by automatically calculating house lordships, conjunctions, aspects, and optional planetary conditions.
 
 ---
 
-## Key Features
+## 🌟 Key Features
 
-* **Automatic Text Standardization:** Converts raw planetary longitudes and positions from Jagannatha Hora into clear, grammatically structured sentences.
-* **Smart Conjunction Grouping:** Automatically identifies co-located planets in the same house and formats them into clean conjunction statements.
-* **Automated Drishti (Aspect) Calculations:** Calculates 7th house aspects as well as special planetary aspects (Mars, Jupiter, Saturn, Rahu, Ketu) and identifies mutual planetary aspects.
-* **Chara Karaka Integration:** Parses and appends Chara Karaka roles (Atmakaraka, Amatyakaraka, etc.) to the respective planets.
-* **Combustion Tracking:** Integrates combustion status directly into planetary descriptions.
-* **Bhava Chalit Support:** Tracks and notes house shifts from the Rasi chart to the Bhava Chalit chart.
-* **Custom Ascendant Override:** Allows manual selection of the Lagna/Ascendant sign if needed.
+- **Live Web Tool:** Instantly accessible online at [sawithanage.github.io/jh-chart-text-generator](https://sawithanage.github.io/jh-chart-text-generator/).
+- **Automatic Text Standardization:** Converts raw planetary longitudes and positions from Jagannatha Hora into clear, grammatically structured sentences.
+- **Smart Conjunction Grouping:** Automatically identifies co-located planets in the same house and formats them into clean conjunction statements.
+- **Automated Drishti (Aspect) Calculations:** Calculates 7th house aspects as well as special planetary aspects (Mars, Jupiter, Saturn, Rahu, Ketu) and identifies mutual planetary aspects.
+- **Chara Karaka Integration:** Parses and appends Chara Karaka roles (Atmakaraka, Amatyakaraka, etc.) to the respective planets.
+- **Combustion Tracking:** Integrates combustion status directly into planetary descriptions.
+- **Bhava Chalit Support:** Tracks and notes house shifts from the Rasi chart to the Bhava Chalit chart.
+- **Custom Ascendant Override:** Allows manual selection of the Lagna/Ascendant sign if needed.
 
 ---
 
-## How to Use
+## 🚀 How to Use
+
+### Quick Access
+
+You can use the tool directly in your browser:  
+👉 **[Launch JH Chart Text Generator](https://sawithanage.github.io/jh-chart-text-generator/)**
+
+### Step-by-Step Instructions
 
 1. **Copy Chart Data from Jagannatha Hora:**
    * Open Jagannatha Hora and locate the **Rasi (D-1)** or divisional chart planetary position table.
@@ -37,9 +49,16 @@ It streamlines Vedic astrology report creation and data preparation for analysis
 
 ---
 
-## Example Output
+## 📝 Example Output
 
 ```text
 d-1 chart ascendant sign is leo.
 lord of the ascendant and 8th house Sun conjunct and placed on the 1st house on the sign of leo.
 retrograde Atmakaraka Saturn lord of the 6th and 7th house is placed on the 10th house on the sign of taurus. Saturn aspects the 12th house, 4th house and 7th house and is aspected by Jupiter.
+```
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
