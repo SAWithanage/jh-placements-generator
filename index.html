@@ -663,15 +663,20 @@
                     }
 
                     let aspectedByStr = "";
-                    if (aspectedBy.length === 0) aspectedByStr = "no planet";
-                    else if (aspectedBy.length === 1) aspectedByStr = aspectedBy[0];
-                    else if (aspectedBy.length === 2) aspectedByStr = aspectedBy.join(" and ");
-                    else {
-                        let last = aspectedBy.pop();
-                        aspectedByStr = aspectedBy.join(", ") + " and " + last;
+                    if (aspectedBy.length > 0) {
+                        let formattedAspectedBy = "";
+                        if (aspectedBy.length === 1) {
+                            formattedAspectedBy = aspectedBy[0];
+                        } else if (aspectedBy.length === 2) {
+                            formattedAspectedBy = aspectedBy.join(" and ");
+                        } else {
+                            let last = aspectedBy.pop();
+                            formattedAspectedBy = aspectedBy.join(", ") + " and " + last;
+                        }
+                        aspectedByStr = ` and is aspected by ${formattedAspectedBy}`;
                     }
 
-                    aspectStrings[pName] = `${pName} aspects the ${aspectsStr} and is aspected by ${aspectedByStr}.`;
+                    aspectStrings[pName] = `${pName} aspects the ${aspectsStr}${aspectedByStr}.`;
                 }
             }
 
